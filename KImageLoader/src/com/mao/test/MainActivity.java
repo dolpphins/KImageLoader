@@ -16,6 +16,8 @@ import android.widget.ImageView;
 
 public class MainActivity extends Activity {
 
+	private final static String TAG = "MainActivity";
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -30,7 +32,7 @@ public class MainActivity extends Activity {
 		imageViews.add(iv2);
 		imageViews.add(iv3);
 		imageViews.add(iv4);
-		String url = "http://www.baidu.com/img/bd_logo1.png";
+		String url = "http://img.pconline.com.cn/images/upload/upc/tx/wallpaper/1209/14/c2/13855271_1347613148393.jpg";
 		
 		ImageLoader imageLoader = ImageLoader.getInstance();
 		
@@ -44,6 +46,11 @@ public class MainActivity extends Activity {
 		ImageLoaderOptions opts = new ImageLoaderOptions.Builder()
 					.cacheInMemory(true)
 					.cacheInDisk(true)
+					.setLoadingDrawableId(R.drawable.ic_launcher)
+					.setLoadedfailDrawableId(R.drawable.image_emoticon10)
+					.loadFromMemory(true)
+					.loadFromDisk(true)
+					.loadFromNetwork(true)
 					.build();
 		
 		imageLoader.displayImage(getApplicationContext(), url, imageViews, opts, new ImageLoaderListener() {

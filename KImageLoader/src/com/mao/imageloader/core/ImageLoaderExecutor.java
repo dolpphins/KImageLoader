@@ -12,14 +12,11 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.w3c.dom.Text;
-
 import com.mao.imageloader.utils.RandomUtils;
 
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
-import android.text.TextUtils;
 
 class ImageLoaderExecutor {
 
@@ -29,7 +26,6 @@ class ImageLoaderExecutor {
 	private final static int corePoolSize = CPU_COUNT + 1;
 	private final static int maximumPoolSize = 2 * CPU_COUNT + 1;
 	
-	//基于优先级队列,长度会自动扩增
 	private final static BlockingQueue<Runnable> workQueue = new PriorityBlockingQueue<Runnable>(128);
 	
 	private final static ThreadFactory threadFactory = new ThreadFactory() {
@@ -97,7 +93,6 @@ class ImageLoaderExecutor {
 		
 		@Override
 		public Result call() throws Exception {
-			//发送开始执行消息
 			Message msg = Message.obtain();
 			msg.what = ImageLoaderHandler.IMAGE_LOADER_START;
 			msg.obj = taskID;
@@ -110,7 +105,6 @@ class ImageLoaderExecutor {
 	
 	private class ImageLoadFuture extends FutureTask<Result>{
 		
-		//任务ID,不同任务要保证不相同
 		private String taskID;
 		
 		public ImageLoadFuture(String taskID, Callable<Result> callable) {
@@ -120,7 +114,6 @@ class ImageLoaderExecutor {
 		
 		@Override
 		protected void done() {
-			//发送结束执行消息
 			Message msg = Message.obtain();
 			msg.what = ImageLoaderHandler.IMAGE_LOADER_FINISH;
 			msg.obj = taskID;

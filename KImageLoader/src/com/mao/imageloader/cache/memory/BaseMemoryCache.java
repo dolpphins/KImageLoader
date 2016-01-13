@@ -3,12 +3,12 @@ package com.mao.imageloader.cache.memory;
 import com.mao.imageloader.cache.ICache;
 
 /**
- * »º´æ¹ÜÀíÆ÷³éÏóÀà
+ * ç¼“å­˜ç®¡ç†å™¨æŠ½è±¡ç±»
  * 
  * @author mao
  *
- * @param <K> »º´æÏî¼üÀàĞÍ
- * @param <V> »º´æÏîÖµÀàĞÍ
+ * @param <K> ç¼“å­˜é¡¹é”®ç±»å‹
+ * @param <V> ç¼“å­˜é¡¹å€¼ç±»å‹
  */
 public abstract class BaseMemoryCache<K, V> implements ICache<K, V>{
 

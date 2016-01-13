@@ -2,13 +2,10 @@ package com.mao.imageloader.core;
 
 public class ImageLoaderConfiguration {
 
-	/** 磁盘缓存文件夹路径 */
 	private String diskCachePath;
 	
-	/** 某一磁盘文件夹缓存大小,单位:字节 */
 	private long diskCacheMaxSize;
 	
-	/** 是否自动创建缓存目录（不存在的话） */
 	private boolean isAutoCreateCacheDir;
 	
 	private ImageLoaderConfiguration(Builder builder) {

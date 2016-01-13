@@ -4,11 +4,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.zip.GZIPInputStream;
 
 import com.mao.imageloader.cache.disk.LruDiskCache;
 import com.mao.imageloader.cache.memory.LruMemoryCache;
-import com.mao.imageloader.core.ImageLoaderExecutor.Result;
 import com.mao.imageloader.utils.IoUtils;
 
 import android.graphics.Bitmap;
@@ -35,64 +33,64 @@ class ImageLoadActualizer {
 	}
 	
 	public ImageLoaderExecutor.Result load(ImageLoadTask task) {
+		Bitmap bitmap = null;
 		if(task != null) {
 			mTask = task;
 			String url = task.getUrl();
 			ImageLoaderOptions opts = task.getOptions();
 			if(!TextUtils.isEmpty(url) && opts != null) {
-				return startLoadImage(url, opts);
+				bitmap = startLoadImage(url, opts);
 			}
 		}
-		return null;
+		
+		return buildResult(bitmap);
 	}
 	
-	private ImageLoaderExecutor.Result startLoadImage(String url, ImageLoaderOptions opts) {
-		ImageLoaderExecutor.Result result = null;
+	private Bitmap startLoadImage(String url, ImageLoaderOptions opts) {
+		Bitmap bitmap = null;
 		
-		result = tryLoadFromMemoryCache(url, opts);
-		if(result == null) {
-			result = tryLoadFromDiskCache(url, opts);
+		if(opts.isLoadFromMemory()) {
+			bitmap = tryLoadFromMemoryCache(url, opts);
 		}
-		if(result == null) {
-			result = tryLoadFromNetwork(url, opts);
+		if(bitmap == null && opts.isLoadFromDisk()) {
+			bitmap = tryLoadFromDiskCache(url, opts);
+		}
+		if(bitmap == null) {
+			bitmap = tryLoadFromFileSystem(url, opts);
+		}
+		if(bitmap == null && opts.isLoadFromNetwork()) {
+			bitmap = tryLoadFromNetwork(url, opts);
 		}
 		
-		//写缓存
-		writeCache(url, result, opts);
+		writeCache(url, bitmap, opts);
 		
-		return result;
+		return bitmap;
 	}
 	
-	private ImageLoaderExecutor.Result tryLoadFromMemoryCache(String url, ImageLoaderOptions opts) {
+	private Bitmap tryLoadFromMemoryCache(String url, ImageLoaderOptions opts) {
 		Bitmap bm = sBitmapCache.get(url);
+		
 		if(bm != null) {
 			ByteArrayOutputStream baos = null;
 			try {
 				baos = new ByteArrayOutputStream();
 				bm.compress(CompressFormat.JPEG, 100, baos);
 				BitmapFactory.Options options = opts.getOptions();
-				bm = BitmapFactory.decodeByteArray(baos.toByteArray(), 0, baos.size(), options);
+				return BitmapFactory.decodeByteArray(baos.toByteArray(), 0, baos.size(), options);
 			} catch(Exception e) {
 				e.printStackTrace();
 			} finally {
 				IoUtils.closeStream(baos);
 			}
-			
-			if(bm != null) {
-				return buildResult(bm);
-			}
 		}
 		return null;
 	}
 	
-	private ImageLoaderExecutor.Result tryLoadFromDiskCache(String url, ImageLoaderOptions opts) {
+	private Bitmap tryLoadFromDiskCache(String url, ImageLoaderOptions opts) {
 		
 		LruDiskCache.EntryValue entryValue = getDiskCache(url, opts);
 		if(entryValue != null) {
-			Bitmap bm = entryValue.getValue();
-			if(bm != null) {
-				return buildResult(bm);
-			}
+			return entryValue.getValue();
 		}
 		return null;
 	}
@@ -104,12 +102,17 @@ class ImageLoadActualizer {
 		return mLruDiskCache.get(entryKey);
 	}
 	
-	private ImageLoaderExecutor.Result tryLoadFromNetwork(String url, ImageLoaderOptions opts) {
+	private Bitmap tryLoadFromFileSystem(String url, ImageLoaderOptions opts) {
+		InputStream is = IoUtils.getInputStream(url);
+		return download(is, opts.getOptions());
+	}
+	
+	private Bitmap tryLoadFromNetwork(String url, ImageLoaderOptions opts) {
 		InputStream is = null;
 		try {
 			URL networkUrl = new URL(url);
 			URLConnection con = networkUrl.openConnection();
-			con.setConnectTimeout(60 * 1000);//设置连接超时时间60s
+			con.setConnectTimeout(60 * 1000);
 			is = con.getInputStream();
 			if(is != null) {
 				Bitmap bm = null;
@@ -127,9 +130,7 @@ class ImageLoadActualizer {
 					bm = download(is, opts.getOptions());
 				}
 				
-				if(bm != null) {
-					return buildResult(bm);
-				}
+				return bm;
 			}
 			return null;
 		} catch (Exception e) {
@@ -141,23 +142,21 @@ class ImageLoadActualizer {
 	}
 	
 	private Bitmap download(InputStream is, BitmapFactory.Options options) {
+		if(is == null) {
+			return null;
+		}
 		return BitmapFactory.decodeStream(is, null, options);
 	}
 	
 	private ImageLoaderExecutor.Result buildResult(Bitmap bm) {
-		if(bm != null) {
-			ImageLoaderExecutor.Result result = new ImageLoaderExecutor.Result();
-			result.setTask(mTask);
-			result.setBm(bm);
-			return result;
-		}
-		return null;
+		ImageLoaderExecutor.Result result = new ImageLoaderExecutor.Result();
+		result.setTask(mTask);
+		result.setBm(bm);
+		return result;
 	}
 	
-	private void writeCache(String url, Result result, ImageLoaderOptions opts) {
-		//需要缓存在内存中
-		if(opts != null && opts.isCacheInMemory() && result != null) {
-			Bitmap bitmap = result.getBm();
+	private void writeCache(String url, Bitmap bitmap, ImageLoaderOptions opts) {
+		if(opts != null && opts.isCacheInMemory() && bitmap != null) {
 			trySaveToMemoryCache(url, bitmap);
 		}
 	}

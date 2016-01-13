@@ -1,7 +1,7 @@
 package com.mao.imageloader.cache;
 
 /**
- * »º´æ½Ó¿Ú
+ * ç¼“å­˜æ¥å£
  * 
  * @author mao
  *
@@ -9,26 +9,26 @@ package com.mao.imageloader.cache;
 public interface ICache<K, V> {
 
 	/**
-	 * Ìí¼Ó»º´æÏî
+	 * æ·»åŠ ç¼“å­˜é¡¹
 	 *
-	 * @param key ¼ü
-	 * @param value Öµ
-	 * @return Ìí¼Ó³É¹¦·µ»Øtrue£¬Ê§°Ü·µ»Øfalse
+	 * @param key é”®
+	 * @param value å€¼
+	 * @return æ·»åŠ æˆåŠŸè¿”å›trueï¼Œå¤±è´¥è¿”å›false
 	 */
 	boolean put(K key, V value);
 	
 	/**
-	 * °´Ö¸¶¨µÄkey»ñÈ¡»º´æÏî
+	 * æŒ‰æŒ‡å®šçš„keyè·å–ç¼“å­˜é¡¹
 	 * 
-	 * @param key Òª»ñÈ¡µÄ»º´æÏîµÄkey
-	 * @return »ñÈ¡³É¹¦·µ»ØÏàÓ¦µÄ»º´æ£¬Ê§°Ü·µ»Ønull
+	 * @param key è¦è·å–çš„ç¼“å­˜é¡¹çš„key
+	 * @return è·å–æˆåŠŸè¿”å›ç›¸åº”çš„ç¼“å­˜ï¼Œå¤±è´¥è¿”å›null
 	 */
 	V get(K key);
 	
 	/**
-	 * Çå³ıËùÓĞ»º´æ
+	 * æ¸…é™¤æ‰€æœ‰ç¼“å­˜
 	 * 
-	 * @return Çå³ı³É¹¦·µ»Øtrue£¬Ê§°Ü·µ»Øfalse
+	 * @return æ¸…é™¤æˆåŠŸè¿”å›trueï¼Œå¤±è´¥è¿”å›false
 	 */
 	boolean clear();
 }

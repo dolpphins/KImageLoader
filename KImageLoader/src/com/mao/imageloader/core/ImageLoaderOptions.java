@@ -3,34 +3,26 @@ package com.mao.imageloader.core;
 import android.graphics.BitmapFactory;
 import android.text.style.BulletSpan;
 
-/**
- * Í¼Æ¬¼ÓÔØÑ¡Ïî
- * 
- * @author mao
- *
- */
 public class ImageLoaderOptions {
 
-	/** Í¼Æ¬ÉèÖÃÑ¡Ïî */
 	private BitmapFactory.Options opts;
 	
-	/** ¼ÓÔØÖĞÏÔÊ¾µÄÍ¼Æ¬Drawable ID */
 	private int loadingDrawableId;
 	
-	/** ¼ÓÔØÊ§°ÜÊ±ÏÔÊ¾µÄÍ¼Æ¬Drawable ID */
 	private int loadedfailDrawableId;
 	
-	/** ÊÇ·ñ»º´æÔÚÄÚ´æÖĞ */
 	private boolean cacheInMemory;
 	
-	/** ÊÇ·ñ»º´æÔÚ´ÅÅÌÖĞ */
 	private boolean cacheInDisk;
 	
-//	/** ´ÅÅÌ»º´æÎÄ¼ş¼ĞÂ·¾¶ */
-//	private String diskCachePath;
-//	
-//	/** ÊÇ·ñ×Ô¶¯´´½¨»º´æÄ¿Â¼£¨Èç¹û²»´æÔÚµÄ»°£© */
-//	private boolean isAutoCreateCacheDir;
+	/** æ˜¯å¦å…è®¸ä»å†…å­˜ç¼“å­˜è·å– */
+	private boolean isLoadFromMemory;
+	
+	/** æ˜¯å¦å…è®¸ä»ç£ç›˜ç¼“å­˜è·å– */
+	private boolean isLoadFromDisk;
+	
+	/** æ˜¯å¦å…è®¸ä»ç½‘ç»œè·å– */
+	private boolean isLoadFromNetwork;
 	
 	private ImageLoaderOptions(Builder builder) {
 		this.opts = builder.opts;
@@ -38,8 +30,9 @@ public class ImageLoaderOptions {
 		this.loadedfailDrawableId = builder.loadedfailDrawableId;
 		this.cacheInMemory = builder.cacheInMemory;
 		this.cacheInDisk = builder.cacheInDisk;
-//		this.diskCachePath = builder.diskCachePath;
-//		this.isAutoCreateCacheDir = builder.isAutoCreateCacheDir;
+		this.isLoadFromMemory = builder.isLoadFromMemory;
+		this.isLoadFromDisk = builder.isLoadFromDisk;
+		this.isLoadFromNetwork = builder.isLoadFromNetwork;
 	}
 	
 	public BitmapFactory.Options getOptions() {
@@ -62,17 +55,17 @@ public class ImageLoaderOptions {
 		return cacheInDisk;
 	}
 	
-//	public String getDiskCachePath() {
-//		return diskCachePath;
-//	}
-//	
-//	public void setDiskCachePath(String path) {
-//		diskCachePath = path;
-//	}
-//	
-//	public boolean isAutoCreateCacheDir() {
-//		return isAutoCreateCacheDir;
-//	}
+	public boolean isLoadFromMemory() {
+		return isLoadFromMemory;
+	}
+	
+	public boolean isLoadFromDisk() {
+		return isLoadFromDisk;
+	}
+	
+	public boolean isLoadFromNetwork() {
+		return isLoadFromNetwork;
+	}
 	
 	public static class Builder {
 		
@@ -81,14 +74,17 @@ public class ImageLoaderOptions {
 		private int loadedfailDrawableId;
 		private boolean cacheInMemory;
 		private boolean cacheInDisk;
-//		private String diskCachePath;
-//		private boolean isAutoCreateCacheDir;
+		private boolean isLoadFromMemory;
+		private boolean isLoadFromDisk;
+		private boolean isLoadFromNetwork;
 		
 		public Builder() {
 			opts = new BitmapFactory.Options();
 			cacheInMemory = false;
 			cacheInDisk = false;
-			//isAutoCreateCacheDir = false;
+			isLoadFromMemory = true;
+			isLoadFromDisk = true;
+			isLoadFromNetwork = true;
 		}
 		
 		public Builder setBitmapOptions(BitmapFactory.Options opts) {
@@ -116,15 +112,20 @@ public class ImageLoaderOptions {
 			return this;
 		}
 		
-//		public Builder setDiskCachePath(String path) {
-//			this.diskCachePath = path;
-//			return this;
-//		}
-//		
-//		public Builder isAutoCreateCacheDir(boolean autoCreate) {
-//			isAutoCreateCacheDir = autoCreate;
-//			return this;
-//		}
+		public Builder loadFromMemory(boolean enabled) {
+			isLoadFromMemory = enabled;
+			return this;
+		}
+		
+		public Builder loadFromDisk(boolean enabled) {
+			isLoadFromDisk = enabled;
+			return this;
+		}
+		
+		public Builder loadFromNetwork(boolean enabled) {
+			isLoadFromNetwork = enabled;
+			return this;
+		}
 		
 		public ImageLoaderOptions build() {
 			return new ImageLoaderOptions(this);

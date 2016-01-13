@@ -1,7 +1,6 @@
 package com.mao.imageloader.cache.disk;
 
 import java.io.InputStream;
-import java.io.OutputStream;
 
 import com.mao.imageloader.cache.ICache;
 
@@ -9,11 +8,11 @@ public abstract class BaseDiskCache<K, V> implements ICache<K, V>{
 
 	
 	/**
-	 * ½«ÊäÈëÁ÷µÄÊı¾İ¸´ÖÆµ½key¶ÔÓ¦µÄÊä³öÁ÷ÖĞ
+	 * å°†è¾“å…¥æµçš„æ•°æ®å¤åˆ¶åˆ°keyå¯¹åº”çš„è¾“å‡ºæµä¸­
 	 * 
-	 * @param is ÊäÈëÁ÷
-	 * @param key Êä³öÁ÷µÄkey
-	 * @return ¸´ÖÆ³É¹¦·µ»Øtrue£¬Ê§°Ü·µ»Øfalse
+	 * @param is è¾“å…¥æµ
+	 * @param key è¾“å‡ºæµçš„key
+	 * @return å¤åˆ¶æˆåŠŸè¿”å›trueï¼Œå¤±è´¥è¿”å›false
 	 */
 	public abstract boolean copyIo(InputStream is, K key);
 	

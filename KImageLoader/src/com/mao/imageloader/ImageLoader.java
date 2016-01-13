@@ -13,7 +13,7 @@ import android.text.TextUtils;
 import android.widget.ImageView;
 
 /**
- * Í¼Æ¬¼ÓÔØÆ÷,Ö§³ÖÒ»¶Ô¶à¼ÓÔØ,Ö§³ÖÖ¸¶¨ÓÅÏÈ¼¶¼ÓÔØ
+ * å›¾ç‰‡åŠ è½½å™¨,æ”¯æŒä¸€å¯¹å¤šåŠ è½½,æ”¯æŒæŒ‡å®šä¼˜å…ˆçº§åŠ è½½
  * 
  * @author mao
  *
@@ -22,10 +22,10 @@ public class ImageLoader {
 
 	private final static String TAG = "ImageLoader";
 	
-	/** Î¨Ò»ÊµÀı */
+	/** å”¯ä¸€å®ä¾‹ */
 	private final static ImageLoader sImageLoader = new ImageLoader();
 	
-	/** ImageLoader°ïÖúÀà */
+	/** ImageLoaderå¸®åŠ©ç±» */
 	private ImageLoaderAssistant mImageLoaderAssistant;
 	
 	private ImageLoader() {	
@@ -33,20 +33,20 @@ public class ImageLoader {
 	}
 	
 	/**
-	 * »ñÈ¡ImageLoaderÎ¨Ò»ÊµÀı¶ÔÏó
+	 * è·å–ImageLoaderå”¯ä¸€å®ä¾‹å¯¹è±¡
 	 * 
-	 * @return ·µ»ØImageLoaderÎ¨Ò»ÊµÀı¶ÔÏó
+	 * @return è¿”å›ImageLoaderå”¯ä¸€å®ä¾‹å¯¹è±¡
 	 */
 	public static ImageLoader getInstance() {
 		return sImageLoader;
 	}
 	
 	/**
-	 * ÏÔÊ¾Í¼Æ¬
+	 * æ˜¾ç¤ºå›¾ç‰‡
 	 * 
-	 * @param context ÉÏÏÂÎÄ
-	 * @param url Òª¼ÓÔØµÄÍ¼Æ¬urlµØÖ·,²»ÄÜÎª¿Õ
-	 * @param imageView ÒªÏÔÊ¾µÄImageView,²»ÄÜÎª¿Õ
+	 * @param context ä¸Šä¸‹æ–‡
+	 * @param url è¦åŠ è½½çš„å›¾ç‰‡urlåœ°å€,ä¸èƒ½ä¸ºç©º
+	 * @param imageView è¦æ˜¾ç¤ºçš„ImageView,ä¸èƒ½ä¸ºç©º
 	 */
 	public void displayImage(Context context, String url, ImageView imageView) {
 		displayImage(context, url, imageView, null);
@@ -57,12 +57,12 @@ public class ImageLoader {
 	}
 	
 	/**
-	 * ÏÔÊ¾Í¼Æ¬
+	 * æ˜¾ç¤ºå›¾ç‰‡
 	 * 
-	 * @param context ÉÏÏÂÎÄ
-	 * @param url Òª¼ÓÔØµÄÍ¼Æ¬urlµØÖ·,²»ÄÜÎª¿Õ
-	 * @param imageView ÒªÏÔÊ¾µÄImageView,²»ÄÜÎª¿Õ
-	 * @param listener ¼àÌıÆ÷
+	 * @param context ä¸Šä¸‹æ–‡
+	 * @param url è¦åŠ è½½çš„å›¾ç‰‡urlåœ°å€,ä¸èƒ½ä¸ºç©º
+	 * @param imageView è¦æ˜¾ç¤ºçš„ImageView,ä¸èƒ½ä¸ºç©º
+	 * @param listener ç›‘å¬å™¨
 	 */
 	public void displayImage(Context context, String url, ImageView imageView, ImageLoaderOptions opts, ImageLoaderListener listener) {
 		if(imageView == null) {
@@ -74,11 +74,11 @@ public class ImageLoader {
 	}
 	
 	/**
-	 * ÏÔÊ¾Í¼Æ¬
+	 * æ˜¾ç¤ºå›¾ç‰‡
 	 * 
-	 * @param context ÉÏÏÂÎÄ
-	 * @param url Òª¼ÓÔØµÄÍ¼Æ¬urlµØÖ·,²»ÄÜÎª¿Õ
-	 * @param imageViews ÒªÏÔÊ¾µÄImageView¼¯ºÏ,²»ÄÜÎª¿ÕÇÒ´óĞ¡±ØĞë´óÓÚ0
+	 * @param context ä¸Šä¸‹æ–‡
+	 * @param url è¦åŠ è½½çš„å›¾ç‰‡urlåœ°å€,ä¸èƒ½ä¸ºç©º
+	 * @param imageViews è¦æ˜¾ç¤ºçš„ImageViewé›†åˆ,ä¸èƒ½ä¸ºç©ºä¸”å¤§å°å¿…é¡»å¤§äº0
 	 */
 	public void displayImage(Context context, String url, List<ImageView> imageViews) {
 		displayImage(context, url, imageViews, null);
@@ -89,12 +89,12 @@ public class ImageLoader {
 	}
 	
 	/**
-	 * ÏÔÊ¾Í¼Æ¬
+	 * æ˜¾ç¤ºå›¾ç‰‡
 	 * 
-	 * @param context ÉÏÏÂÎÄ
-	 * @param url Òª¼ÓÔØµÄÍ¼Æ¬urlµØÖ·,²»ÄÜÎª¿Õ
-	 * @param imageViews ÒªÏÔÊ¾µÄImageView¼¯ºÏ,²»ÄÜÎª¿ÕÇÒ´óĞ¡±ØĞë´óÓÚ0
-	 * @param listener ¼àÌıÆ÷
+	 * @param context ä¸Šä¸‹æ–‡
+	 * @param url è¦åŠ è½½çš„å›¾ç‰‡urlåœ°å€,ä¸èƒ½ä¸ºç©º
+	 * @param imageViews è¦æ˜¾ç¤ºçš„ImageViewé›†åˆ,ä¸èƒ½ä¸ºç©ºä¸”å¤§å°å¿…é¡»å¤§äº0
+	 * @param listener ç›‘å¬å™¨
 	 */
 	public void displayImage(Context context, String url, List<ImageView> imageViews, ImageLoaderOptions opts, ImageLoaderListener listener) {
 		if(context == null || TextUtils.isEmpty(url)
@@ -102,25 +102,25 @@ public class ImageLoader {
 						   || imageViews.size() <= 0) {
 			return;
 		}
-		ImageLoadTask task = new ImageLoadTask(url, imageViews);
+		ImageLoadTask task = new ImageLoadTask(context, url, imageViews);
 		task.setOptions(opts);
 		task.setImageLoaderListener(listener);
 		mImageLoaderAssistant.submit(task);	
 	}
 	
 	/**
-	 * ÉèÖÃImageLoaderÅäÖÃ
+	 * è®¾ç½®ImageLoaderé…ç½®
 	 * 
-	 * @param config ÒªÉèÖÃµÄImageLoaderÅäÖÃ
+	 * @param config è¦è®¾ç½®çš„ImageLoaderé…ç½®
 	 */
 	public void setImageLoaderConfiguration(ImageLoaderConfiguration config) {
 		mImageLoaderAssistant.setImageLoaderConfiguration(config);
 	}
 	
 	/**
-	 * »ñÈ¡ImageLoaderÅäÖÃ
+	 * è·å–ImageLoaderé…ç½®
 	 * 
-	 * @return ·µ»ØImageLoaderÅäÖÃ
+	 * @return è¿”å›ImageLoaderé…ç½®
 	 */
 	public ImageLoaderConfiguration getImageLoaderConfiguration() {
 		return mImageLoaderAssistant.getImageLoaderConfiguration();

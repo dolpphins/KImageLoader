@@ -1,6 +1,7 @@
 package com.mao.imageloader.utils;
 
 import java.io.Closeable;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -20,13 +21,6 @@ public class IoUtils {
 		return false;
 	}
 	
-	/**
-	 * 复制流数据
-	 * 
-	 * @param is 输入流
-	 * @param os 输出流
-	 * @return 成功返回true，失败返回false
-	 */
 	public static boolean copy(InputStream is, OutputStream os) {
 		if(is == null || os == null) {
 			return false;
@@ -43,5 +37,17 @@ public class IoUtils {
 			e.printStackTrace();
 			return false;
 		}
+	}
+	
+	public static InputStream getInputStream(String path) {
+		if(!FileUtils.exist(path)) {
+			return null;
+		}
+		try {
+			return new FileInputStream(path);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

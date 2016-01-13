@@ -1,14 +1,16 @@
 package com.mao.imageloader.core;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 import com.mao.imageloader.ImageLoaderListener;
 
+import android.content.Context;
 import android.widget.ImageView;
 
 public class ImageLoadTask implements Comparable<ImageLoadTask>{
 	
-	/** ÈÎÎñÄ¬ÈÏÓÅÏÈ¼¶±ğ */
+	/** ä»»åŠ¡é»˜è®¤ä¼˜å…ˆçº§åˆ« */
 	private final static int DEFAULT_PRIORITY = 5;
 	
 	private String url;
@@ -21,19 +23,22 @@ public class ImageLoadTask implements Comparable<ImageLoadTask>{
 	
 	private ImageLoaderOptions options;
 	
+	private WeakReference<Context> context;
+	
 	public ImageLoadTask() {}
 	
-	public ImageLoadTask(String url, List<ImageView> imageViews) {
+	public ImageLoadTask(Context context, String url, List<ImageView> imageViews) {
+		this.context = new WeakReference<Context>(context);
 		this.url = url;
 		this.imageViews = imageViews;
 	}
 	
 	/**
-	 * ¹¹Ôìº¯Êı
+	 * æ„é€ å‡½æ•°
 	 * 
 	 * @param url
 	 * @param imageView
-	 * @param priority ÈÎÎñÓÅÏÈ¼¶±ğ,±ØĞëÔÚ[0, 10]·¶Î§ÄÚ,Èç¹û²»ÔÚ¸Ã·¶Î§ÄÚ¶¼»á±»°´Ä¬ÈÏÓÅÏÈ¼¶´¦Àí
+	 * @param priority ä»»åŠ¡ä¼˜å…ˆçº§åˆ«,å¿…é¡»åœ¨[0, 10]èŒƒå›´å†…,å¦‚æœä¸åœ¨è¯¥èŒƒå›´å†…éƒ½ä¼šè¢«æŒ‰é»˜è®¤ä¼˜å…ˆçº§å¤„ç†
 	 */
 	public ImageLoadTask(String url, List<ImageView> imageViews, int priority) {
 		this.url = url;
@@ -90,4 +95,14 @@ public class ImageLoadTask implements Comparable<ImageLoadTask>{
 	public void setOptions(ImageLoaderOptions options) {
 		this.options = options;
 	}
+
+	public WeakReference<Context> getContext() {
+		return context;
+	}
+
+	public void setContext(WeakReference<Context> context) {
+		this.context = context;
+	}
+	
+	
 }

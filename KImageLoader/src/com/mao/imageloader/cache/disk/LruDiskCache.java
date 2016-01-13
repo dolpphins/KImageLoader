@@ -18,7 +18,7 @@ import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 
 /**
- * »ùÓÚDiskLruCacheÊµÏÖµÄBitmap´ÅÅÌ»º´æÀà
+ * åŸºäºDiskLruCacheå®ç°çš„Bitmapç£ç›˜ç¼“å­˜ç±»
  * 
  * @author mao
  *
@@ -101,7 +101,7 @@ public class LruDiskCache extends BaseDiskCache<LruDiskCache.EntryKey, EntryValu
 		return decodeBitmapStream(is, options);
 	}
 	
-	//´ÓÖ¸¶¨Á÷¶Á
+	//ä»æŒ‡å®šæµè¯»
 	private Bitmap decodeBitmapStream(InputStream is, BitmapFactory.Options options) {
 		if(is != null) {
 			return BitmapFactory.decodeStream(is, null, options);

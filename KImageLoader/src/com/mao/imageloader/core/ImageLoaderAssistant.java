@@ -1,11 +1,15 @@
 package com.mao.imageloader.core;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 import com.mao.imageloader.ImageLoaderListener;
 import com.mao.imageloader.core.ImageLoaderExecutor.OnImageLoaderExecutorListener;
+import com.mao.imageloader.utils.MethodsCompat;
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 
 public class ImageLoaderAssistant {
@@ -36,6 +40,13 @@ public class ImageLoaderAssistant {
 		@Override
 		public void onImageLoadTaskStart(ImageLoadTask task) {
 			if(task != null) {
+				//
+				ImageLoaderOptions options = task.getOptions();
+				if(options != null) {
+					setImageResources(task, options.getLoadingDrawableId());
+				}
+				
+				//回调
 				ImageLoaderListener listener = task.getImageLoaderListener();
 				if(listener != null) {
 					listener.onImageLoadTaskStart(task.getUrl(), task.getImageViews());
@@ -63,11 +74,43 @@ public class ImageLoaderAssistant {
 		@Override
 		public void onImageLoadTaskFail(ImageLoadTask task) {
 			if(task != null) {
+				//
+				ImageLoaderOptions options = task.getOptions();
+				if(options != null) {
+					setImageResources(task, options.getLoadedFailDrawableId());
+				}
+				
+				//回调
 				ImageLoaderListener listener = task.getImageLoaderListener();
 				if(listener != null) {
 					listener.onImageLoadTaskFail(task.getUrl(), task.getImageViews());
 				}
 			}
 		}
+		
+		private void setImageResources(ImageLoadTask task, int resId) {
+			if(task != null) {
+				WeakReference<Context> weakContext = task.getContext();
+				if(weakContext == null) {
+					return;
+				}
+				Context context = weakContext.get();
+				ImageLoaderOptions options = task.getOptions();
+				List<ImageView> imageViewsList = task.getImageViews();
+				if(context == null || options == null
+								   || imageViewsList == null
+								   || imageViewsList.size() <= 0) {
+					return;
+				}
+				Drawable drawable = MethodsCompat.getDrawable(context, resId);
+				if(drawable != null) {
+					for(ImageView imageView : imageViewsList) {
+						if(imageView != null) {
+							imageView.setImageDrawable(drawable);
+						}
+					}
+				}
+			}
+		}	
 	}
 }

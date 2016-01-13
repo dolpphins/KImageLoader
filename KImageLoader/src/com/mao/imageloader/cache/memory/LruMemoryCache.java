@@ -7,17 +7,17 @@ import android.text.TextUtils;
 import android.util.LruCache;
 
 /**
- * »ùÓÚLruCacheµÄBitmapÄÚ´æ»º´æ¹ÜÀíÆ÷
+ * åŸºäºLruCacheçš„Bitmapå†…å­˜ç¼“å­˜ç®¡ç†å™¨
  * 
  * @author mao
  *
  */
 public class LruMemoryCache extends BaseMemoryCache<String, Bitmap>{
 
-	/** »º´æÌõ¼şÄÚ´æÒò×Ó */
+	/** ç¼“å­˜æ¡ä»¶å†…å­˜å› å­ */
 	private final static float LIMIT_FACTOR = 15.0f;
 	
-	/** ×î´ó»º´æ´óĞ¡£¬µ¥Î»£º×Ö½Ú£¬Ä¬ÈÏÎª¶Ñ×î´ó´óĞ¡µÄ1/6*/
+	/** æœ€å¤§ç¼“å­˜å¤§å°ï¼Œå•ä½ï¼šå­—èŠ‚ï¼Œé»˜è®¤ä¸ºå †æœ€å¤§å¤§å°çš„1/6*/
 	private final static int MAX_CACHE_SIZE = (int) (Runtime.getRuntime().maxMemory() / 6);
 	
 	private LruCache<String, Bitmap> sBitmapCache;
@@ -55,7 +55,7 @@ public class LruMemoryCache extends BaseMemoryCache<String, Bitmap>{
 		if(TextUtils.isEmpty(key) || value == null) {
 			return false;
 		} else {
-			//ÅĞ¶ÏÊÇ·ñÓĞ×ã¹»µÄÄÚ´æ
+			//åˆ¤æ–­æ˜¯å¦æœ‰è¶³å¤Ÿçš„å†…å­˜
 			if(checkRemainderMemory(value)) {
 				sBitmapCache.put(key, value);
 				return true;

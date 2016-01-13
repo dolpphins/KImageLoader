@@ -6,7 +6,7 @@ import android.graphics.Bitmap;
 import android.widget.ImageView;
 
 /**
- * Í¼Æ¬¼ÓÔØ¼àÌı½Ó¿Ú
+ * å›¾ç‰‡åŠ è½½ç›‘å¬æ¥å£
  * 
  * @author mao
  *
@@ -14,28 +14,28 @@ import android.widget.ImageView;
 public interface ImageLoaderListener {
 
 	/**
-	 * µ±Í¼Æ¬¿ªÊ¼¼ÓÔØÊ±»Øµ÷¸Ã·½·¨,×¢ÒâÍ¼Æ¬¿ªÊ¼¼ÓÔØ²¢²»ÊÇÖ¸¿Í»§¶Ë´úÂëµ÷ÓÃ¼ÓÔØ·½·¨Ê±£¬
-	 * ¶øÊÇµ±ÕæÕıÒª¼ÓÔØÍ¼Æ¬Ê±.
+	 * å½“å›¾ç‰‡å¼€å§‹åŠ è½½æ—¶å›è°ƒè¯¥æ–¹æ³•,æ³¨æ„å›¾ç‰‡å¼€å§‹åŠ è½½å¹¶ä¸æ˜¯æŒ‡å®¢æˆ·ç«¯ä»£ç è°ƒç”¨åŠ è½½æ–¹æ³•æ—¶ï¼Œ
+	 * è€Œæ˜¯å½“çœŸæ­£è¦åŠ è½½å›¾ç‰‡æ—¶.
 	 * 
-	 * @param url Í¼Æ¬urlµØÖ·
-	 * @param imageViews ÏÔÊ¾Í¼Æ¬µÄImageView¼¯ºÏ
+	 * @param url å›¾ç‰‡urlåœ°å€
+	 * @param imageViews æ˜¾ç¤ºå›¾ç‰‡çš„ImageViewé›†åˆ
 	 */
 	void onImageLoadTaskStart(String url, List<ImageView> imageViews);
 	
 	/**
-	 * µ±Í¼Æ¬¼ÓÔØ³É¹¦Ê±»Øµ÷¸Ã·½·¨.
+	 * å½“å›¾ç‰‡åŠ è½½æˆåŠŸæ—¶å›è°ƒè¯¥æ–¹æ³•.
 	 * 
-	 * @param url Í¼Æ¬urlµØÖ·
-	 * @param imageViews ÏÔÊ¾Í¼Æ¬µÄImageView¼¯ºÏ
-	 * @param bitmap »ñÈ¡µ½µÄÎ»Í¼
+	 * @param url å›¾ç‰‡urlåœ°å€
+	 * @param imageViews æ˜¾ç¤ºå›¾ç‰‡çš„ImageViewé›†åˆ
+	 * @param bitmap è·å–åˆ°çš„ä½å›¾
 	 */
 	void onImageLoadTaskSuccess(String url, List<ImageView> imageViews, Bitmap bitmap);
 	
 	/**
-	 * µ±Í¼Æ¬¼ÓÔØÊ§°ÜÊ±»Øµ÷¸Ã·½·¨.
+	 * å½“å›¾ç‰‡åŠ è½½å¤±è´¥æ—¶å›è°ƒè¯¥æ–¹æ³•.
 	 * 
-	 * @param url Í¼Æ¬urlµØÖ·
-	 * @param imageViews ÏÔÊ¾Í¼Æ¬µÄImageView¼¯ºÏ
+	 * @param url å›¾ç‰‡urlåœ°å€
+	 * @param imageViews æ˜¾ç¤ºå›¾ç‰‡çš„ImageViewé›†åˆ
 	 */
 	void onImageLoadTaskFail(String url, List<ImageView> imageViews);
 }
