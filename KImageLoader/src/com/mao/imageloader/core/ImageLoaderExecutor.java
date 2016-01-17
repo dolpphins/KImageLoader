@@ -12,6 +12,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.mao.imageloader.utils.L;
 import com.mao.imageloader.utils.RandomUtils;
 
 import android.graphics.Bitmap;
@@ -54,27 +55,34 @@ class ImageLoaderExecutor {
 	private ImageLoaderHandler mHandler;
 	private ImageLoaderConfiguration mImageLoaderConfiguration;
 	
+	private ImageLoadActualizer mImageLoadActualizer;
+	
 	public ImageLoaderExecutor() {
 		mTaskMap = new HashMap<String, ImageLoadTask>();
 		mFutureMap = new HashMap<String, FutureTask<Result>>();
 		mHandler = new ImageLoaderHandler(this);
 		mImageLoaderConfiguration = DEFAULT_CONFIGURATION;
+		mImageLoadActualizer = new ImageLoadActualizer(mImageLoaderConfiguration);
 	}
 	
 	public void submit(ImageLoadTask task) {
+		
+		//先判断是否存在相同任务
+		if(mTaskMap.containsValue(task)) { //containsValue底部使用equals比较是否相等
+			L.i(TAG, "存在相同的任务啦...");
+			return;
+		}
 		
 		//
 		ImageLoaderOptions opts = task.getOptions();
 		if(opts == null) {
 			opts = DEFAULT_OPTIONS; 
 		}
-//		if(TextUtils.isEmpty(opts.getDiskCachePath())) {
-//			opts.setDiskCachePath(mImageLoaderConfiguration.getDiskCachePath());
-//		}
 		
 		String taskID = RandomUtils.randomDigits();
 		Callable<Result> callableTask = new ImageLoadCallable(taskID, task);
-		FutureTask<Result> future = new ImageLoadFuture(taskID, callableTask);
+		FutureTask<Result> future = new ImageLoadFuture(taskID, callableTask, task);
+		//当前线程为UI线程
 		mTaskMap.put(taskID, task);
 		mFutureMap.put(taskID, future);
 		
@@ -98,18 +106,19 @@ class ImageLoaderExecutor {
 			msg.obj = taskID;
 			mHandler.sendMessage(msg);
 			
-			ImageLoadActualizer loader = new ImageLoadActualizer(mImageLoaderConfiguration);
-			return loader.load(task);			
+			return mImageLoadActualizer.load(task);			
 		}
 	}
 	
-	private class ImageLoadFuture extends FutureTask<Result>{
+	private class ImageLoadFuture extends FutureTask<Result> implements Comparable<ImageLoadFuture> {
 		
 		private String taskID;
+		private ImageLoadTask mTask;
 		
-		public ImageLoadFuture(String taskID, Callable<Result> callable) {
+		public ImageLoadFuture(String taskID, Callable<Result> callable, ImageLoadTask task) {
 			super(callable);
 			this.taskID = taskID;
+			mTask = task;
 		}
 		
 		@Override
@@ -119,10 +128,19 @@ class ImageLoaderExecutor {
 			msg.obj = taskID;
 			mHandler.sendMessage(msg);
 		}
+
+		@Override
+		public int compareTo(ImageLoadFuture another) {
+			if(mTask == null || another == null) {
+				return 0;
+			}
+			return mTask.compareTo(another.mTask);
+		}
 	}
 	
 	public void setImageLoaderConfiguration(ImageLoaderConfiguration config) {
 		mImageLoaderConfiguration = config;
+		mImageLoadActualizer = new ImageLoadActualizer(mImageLoaderConfiguration);
 	}
 	
 	public ImageLoaderConfiguration getImageLoaderConfiguration() {
@@ -194,9 +212,11 @@ class ImageLoaderExecutor {
 	
 	private void handleForImageLoadTaskFinish(String taskID) {
 		FutureTask<Result> future = mFutureMap.get(taskID);
+		ImageLoadTask task = null;
+		boolean isSuccess = false;
 		if(future != null) {
 			try {
-				ImageLoadTask task = null;
+				
 				Bitmap bitmap = null;
 				
 				Result result = future.get(1, TimeUnit.SECONDS);
@@ -207,14 +227,22 @@ class ImageLoaderExecutor {
 				if(mExecutorListener != null) {
 					if(bitmap != null) {
 						mExecutorListener.onImageLoadTaskSuccess(task, bitmap);
-					} else {
-						mExecutorListener.onImageLoadTaskFail(task);
+						isSuccess = true;
 					}
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
+		
+		//没有成功一切按失败处理
+		if(!isSuccess) {
+			mExecutorListener.onImageLoadTaskFail(task);
+		}
+		
+		//移除掉任务及记录，当前线程为UI线程
+		mTaskMap.remove(taskID);
+		mFutureMap.remove(taskID);
 	}
 	
 	static class Result {

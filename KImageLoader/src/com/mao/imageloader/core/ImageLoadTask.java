@@ -4,6 +4,7 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 
 import com.mao.imageloader.ImageLoaderListener;
+import com.mao.imageloader.utils.CollectionsUtils;
 
 import android.content.Context;
 import android.widget.ImageView;
@@ -54,6 +55,52 @@ public class ImageLoadTask implements Comparable<ImageLoadTask>{
 			return 1;
 		}
 		return priority - another.priority;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		boolean isEquals = false;
+		if(o != null && o instanceof ImageLoadTask) {
+			ImageLoadTask another = ((ImageLoadTask) o);
+			String anotherUrl = another.url;
+			List<ImageView> anotherImageViews = another.imageViews;
+			
+			if(url == null && anotherUrl == null) {				
+				isEquals = CollectionsUtils.compareList(imageViews, anotherImageViews);
+			} else if(url != null && anotherUrl != null) {
+				isEquals = CollectionsUtils.compareList(imageViews, anotherImageViews);
+			}
+		}
+		return isEquals;
+	}
+	
+	@Override
+	public int hashCode() {
+		int hashCode = 0xFFFFFFFF; 
+		hashCode &= generateUrlHashCode(url);
+		hashCode &= generateImageViewsHashCode(imageViews);
+		
+		return hashCode;
+	}
+	
+	private int generateUrlHashCode(String url) {
+		int hashCode = 0xFFFFFFFF;
+		if(url != null) {
+			hashCode &= url.hashCode();
+		}
+		return hashCode;
+	}
+	
+	private int generateImageViewsHashCode(List<ImageView> imageViews) {
+		int hashCode = 0xFFFFFFFF;
+		if(imageViews != null) {
+			for(ImageView imageView : imageViews) {
+				if(imageView != null) {
+					hashCode &= imageView.hashCode();
+				}
+			}
+		}
+		return hashCode;
 	}
 
 	public String getUrl() {

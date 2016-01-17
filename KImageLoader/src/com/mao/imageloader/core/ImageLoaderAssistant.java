@@ -5,7 +5,9 @@ import java.util.List;
 
 import com.mao.imageloader.ImageLoaderListener;
 import com.mao.imageloader.core.ImageLoaderExecutor.OnImageLoaderExecutorListener;
+import com.mao.imageloader.utils.L;
 import com.mao.imageloader.utils.MethodsCompat;
+import com.mao.kimageloader.R;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -60,7 +62,9 @@ public class ImageLoaderAssistant {
 				List<ImageView> imageViews = task.getImageViews();
 				if(imageViews != null) {
 					for(ImageView imageView : imageViews) {
-						imageView.setImageBitmap(bitmap);
+						if(imageView != null) {
+							imageView.setImageBitmap(bitmap);
+						}
 					}
 				}
 				

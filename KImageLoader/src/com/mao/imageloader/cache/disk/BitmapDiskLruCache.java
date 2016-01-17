@@ -7,10 +7,11 @@ import java.io.OutputStream;
 
 import com.jakewharton.disklrucache.DiskLruCache;
 import com.jakewharton.disklrucache.DiskLruCache.Snapshot;
-import com.mao.imageloader.cache.disk.LruDiskCache.EntryValue;
+import com.mao.imageloader.cache.disk.BitmapDiskLruCache.EntryValue;
 import com.mao.imageloader.core.ImageLoaderOptions;
 import com.mao.imageloader.utils.EncryptHelper;
 import com.mao.imageloader.utils.IoUtils;
+import com.mao.imageloader.utils.L;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
@@ -23,13 +24,15 @@ import android.text.TextUtils;
  * @author mao
  *
  */
-public class LruDiskCache extends BaseDiskCache<LruDiskCache.EntryKey, EntryValue>{
+public class BitmapDiskLruCache extends BaseDiskCache<BitmapDiskLruCache.EntryKey, EntryValue>{
 
 	private DiskLruCache mDiskLruCache;
 	
-	public LruDiskCache(String path, boolean autoCreate, long maxSize) {
+	public BitmapDiskLruCache(String path, boolean autoCreate, long maxSize) {
 		initDiskCache(path, autoCreate, maxSize);
 	}
+	
+	
 	
 	private void initDiskCache(String path, boolean autoCreate, long maxSize) {
 		if(mDiskLruCache == null && !TextUtils.isEmpty(path)) {
@@ -125,6 +128,7 @@ public class LruDiskCache extends BaseDiskCache<LruDiskCache.EntryKey, EntryValu
 			
 			if(editor != null) {
 				os = editor.newOutputStream(0);
+				
 				if(IoUtils.copy(is, os)) {
 					editor.commit();
 					return true;
