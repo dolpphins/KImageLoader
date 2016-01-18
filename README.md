@@ -13,9 +13,9 @@ Features
 Usage
 ------
 
-###Simple
-`
-    imageLoader = ImageLoader.getInstance();
+```
+
+	imageLoader = ImageLoader.getInstance();
 		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder()
 						.setDiskCacheMaxSize(2 * 1024 * 1024 * 1024L) //max disk cache 2G
 						.setDiskCachePath("/sdcard/KImageLoader") //disk cache directory
@@ -25,7 +25,6 @@ Usage
 						.setDownloader(null)         //specify the downloader
 						.build();
 		imageLoader.setImageLoaderConfiguration(config);
-		
 		ImageLoaderOptions opts = new ImageLoaderOptions.Builder()
 				.cacheInMemory(true) //permit cache in memory
 				.cacheInDisk(true)   //permit cache in disk
@@ -36,12 +35,12 @@ Usage
 				.loadFromNetwork(true) //permit get data from network
 				.setBitmapOptions(null) //specify the quality of loading picture
 				.build();
-		
 		String url = "http://img2.imgtn.bdimg.com/it/u=2702123953,998736265&fm=21&gp=0.jpg";
-		
 		ImageView imageView = (ImageView) findViewById(R.id.iv);
 		imageLoader.displayImage(getApplicationContext(), url, imageView, opts);
-`
+
+```
+
 License
 ------
 
