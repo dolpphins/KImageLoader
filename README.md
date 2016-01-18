@@ -1,5 +1,5 @@
 # KImageLoader
-the ImageLoader which provide some particular actions
+the ImageLoader which provides some particular actions
 
 Features
 ------
