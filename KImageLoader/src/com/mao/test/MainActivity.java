@@ -35,75 +35,30 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		initData();
-		
 		imageLoader = ImageLoader.getInstance();
-		
 		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder()
-						.setDiskCacheMaxSize(2 * 1024 * 1024 * 1024L) //2G
-						.setDiskCachePath("/sdcard/KImageLoader")
+						.setDiskCacheMaxSize(2 * 1024 * 1024 * 1024L) //磁盘缓存大小
+						.setDiskCachePath("/sdcard/KImageLoader") //磁盘缓存目录
+						.isAutoCreateCacheDir(true) //磁盘缓存目不存在时是否自动创建录，默认为false
 						.build();
-		
 		imageLoader.setImageLoaderConfiguration(config);
 		
-		gv = (GridView) findViewById(R.id.gv);
-		gv.setAdapter(new PicturesGridViewAdapter());
-//		LinearLayout main = (LinearLayout) findViewById(R.id.main);
-//		for(int i = 0; i < 10; i++) {
-//			ImageView iv = new ImageView(this);
-//			
-//			ImageLoaderOptions opts = new ImageLoaderOptions.Builder()
-//					.cacheInMemory(true)
-//					.cacheInDisk(true)
-//					.setLoadingDrawableId(R.drawable.ic_launcher)
-//					.setLoadedfailDrawableId(R.drawable.image_emoticon10)
-//					.loadFromMemory(false)
-//					.loadFromDisk(false)
-//					.loadFromNetwork(true)
-//					.build();
-//			
-//			imageLoader.displayImage(getApplicationContext(), mUrlList.get(i), iv, opts, null);
-//			
-//			main.addView(iv);
-//		}
-	}
-	
-	private class PicturesGridViewAdapter extends BaseAdapter {
-
-		@Override
-		public int getCount() {
-			return mUrlList.size();
-		}
-
-		@Override
-		public Object getItem(int position) {
-			return null;
-		}
-
-		@Override
-		public long getItemId(int position) {
-			return 0;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			if(convertView == null) {
-				convertView = new ImageView(getApplicationContext());
-				AbsListView.LayoutParams params = new AbsListView.LayoutParams(150, 150);
-				convertView.setLayoutParams(params);
-			}
-			ImageView imageView = ((ImageView)convertView);
-			imageView.setImageBitmap(null);
-			
-			String url = mUrlList.get(position);
-			
-			System.out.println(position);
-			System.out.println(url);
-			
-			displayImage(url, imageView);
-			
-			return convertView;
-		}	
+		ImageLoaderOptions opts = new ImageLoaderOptions.Builder()
+				.cacheInMemory(true) //允许内存缓存
+				.cacheInDisk(true)   //运行磁盘缓存
+				.setLoadingDrawableId(R.drawable.ic_launcher) //加载图片时显示的图片
+				.setLoadedfailDrawableId(R.drawable.image_emoticon10) //加载图片失败显示的图片
+				.loadFromMemory(false) //是否允许从内存缓存中读取
+				.loadFromDisk(false)   //是否允许从磁盘缓存中读取
+				.loadFromNetwork(true) //是否允许通过网络加载图片
+				.setBitmapOptions(null) //指定要加载的图片的质量等
+				.build();
+		
+		String url = "http://img2.imgtn.bdimg.com/it/u=2702123953,998736265&fm=21&gp=0.jpg";
+		
+		ImageView imageView = (ImageView) findViewById(R.id.iv);
+		imageLoader.displayImage(getApplicationContext(), url, imageView, opts);
+		
 	}
 	
 	private void initData() {
@@ -120,38 +75,5 @@ public class MainActivity extends Activity {
 		mUrlList.add("http://s7.sinaimg.cn/middle/5c69ce18hb6dda6b5b4c6&690");
 		mUrlList.add("http://imgsrc.baidu.com/forum/pic/item/0e2442a7d933c895a325d5c4d11373f082020031.jpg");
 		mUrlList.add("http://img0.imgtn.bdimg.com/it/u=3146285871,4053944809&fm=21&gp=0.jpg");
-		
-		
-	}
-	
-	private void displayImage(String url, ImageView imageView) {
-		
-		ImageLoaderOptions opts = new ImageLoaderOptions.Builder()
-				.cacheInMemory(true)
-				.cacheInDisk(true)
-				.setLoadingDrawableId(R.drawable.ic_launcher)
-				.setLoadedfailDrawableId(R.drawable.image_emoticon10)
-				.loadFromMemory(false)
-				.loadFromDisk(false)
-				.loadFromNetwork(true)
-				.build();
-		
-		imageLoader.displayImage(getApplicationContext(), url, imageView, opts, new ImageLoaderListener() {
-			
-			@Override
-			public void onImageLoadTaskSuccess(String url, List<ImageView> imageViews, Bitmap bitmap) {
-				System.out.println(url + " onImageLoadTaskSuccess");
-			}
-			
-			@Override
-			public void onImageLoadTaskStart(String url, List<ImageView> imageViews) {
-				System.out.println("onImageLoadTaskStart");
-			}
-			
-			@Override
-			public void onImageLoadTaskFail(String url, List<ImageView> imageViews) {
-				System.out.println("onImageLoadTaskFail");
-			}
-		});
 	}
 }

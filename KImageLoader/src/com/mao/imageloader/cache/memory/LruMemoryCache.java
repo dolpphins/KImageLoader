@@ -4,7 +4,6 @@ import com.mao.imageloader.utils.BitmapUtils;
 
 import android.graphics.Bitmap;
 import android.text.TextUtils;
-import android.util.LruCache;
 
 /**
  * 基于LruCache的Bitmap内存缓存管理器
@@ -20,13 +19,13 @@ public class LruMemoryCache extends BaseMemoryCache<String, Bitmap>{
 	/** 最大缓存大小，单位：字节，默认为堆最大大小的1/6*/
 	private final static int MAX_CACHE_SIZE = (int) (Runtime.getRuntime().maxMemory() / 6);
 	
-	private LruCache<String, Bitmap> sBitmapCache;
+	private android.support.v4.util.LruCache<String, Bitmap> sBitmapCache;
 	
 	private LruMemoryCache() {}
 	
 	private void init(int maxSize) {
 		if(sBitmapCache == null) {
-			sBitmapCache = new LruCache<String, Bitmap>(maxSize){
+			sBitmapCache = new android.support.v4.util.LruCache<String, Bitmap>(maxSize){
 				
 				@Override
 				protected int sizeOf(String key, Bitmap value) {
