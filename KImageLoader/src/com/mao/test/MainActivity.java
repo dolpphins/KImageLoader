@@ -4,21 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.mao.imageloader.ImageLoader;
-import com.mao.imageloader.ImageLoaderListener;
 import com.mao.imageloader.core.ImageLoaderConfiguration;
 import com.mao.imageloader.core.ImageLoaderOptions;
 import com.mao.kimageloader.R;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 public class MainActivity extends Activity {
 
@@ -40,6 +33,9 @@ public class MainActivity extends Activity {
 						.setDiskCacheMaxSize(2 * 1024 * 1024 * 1024L) //磁盘缓存大小
 						.setDiskCachePath("/sdcard/KImageLoader") //磁盘缓存目录
 						.isAutoCreateCacheDir(true) //磁盘缓存目不存在时是否自动创建录，默认为false
+						.setMemoryCacheManager(null) //指定内存缓存管理器
+						.setDiskCacheManager(null)   //指定磁盘缓存管理器
+						.setDownloader(null)         //指定下载器
 						.build();
 		imageLoader.setImageLoaderConfiguration(config);
 		

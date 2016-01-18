@@ -7,11 +7,8 @@ import java.io.OutputStream;
 
 import com.jakewharton.disklrucache.DiskLruCache;
 import com.jakewharton.disklrucache.DiskLruCache.Snapshot;
-import com.mao.imageloader.cache.disk.BitmapDiskLruCache.EntryValue;
-import com.mao.imageloader.core.ImageLoaderOptions;
 import com.mao.imageloader.utils.EncryptHelper;
 import com.mao.imageloader.utils.IoUtils;
-import com.mao.imageloader.utils.L;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
@@ -24,15 +21,13 @@ import android.text.TextUtils;
  * @author mao
  *
  */
-public class BitmapDiskLruCache extends BaseDiskCache<BitmapDiskLruCache.EntryKey, EntryValue>{
+public class BitmapDiskLruCache extends BaseDiskCache<DiskCache.KeyEntry, DiskCache.ValueEntry>{
 
 	private DiskLruCache mDiskLruCache;
 	
 	public BitmapDiskLruCache(String path, boolean autoCreate, long maxSize) {
 		initDiskCache(path, autoCreate, maxSize);
 	}
-	
-	
 	
 	private void initDiskCache(String path, boolean autoCreate, long maxSize) {
 		if(mDiskLruCache == null && !TextUtils.isEmpty(path)) {
@@ -60,14 +55,14 @@ public class BitmapDiskLruCache extends BaseDiskCache<BitmapDiskLruCache.EntryKe
 	}
 	
 	@Override
-	public boolean put(EntryKey key, EntryValue value) {
+	public boolean put(DiskCache.KeyEntry key, DiskCache.ValueEntry value) {
 		if(key == null || value == null) {
 			return false;
 		}
 		return putVal(key, value);
 	}
 
-	private boolean putVal(EntryKey key, EntryValue value) {
+	private boolean putVal(DiskCache.KeyEntry key, DiskCache.ValueEntry value) {
 		if(value.getValue() == null) {
 			return false;
 		}
@@ -90,8 +85,8 @@ public class BitmapDiskLruCache extends BaseDiskCache<BitmapDiskLruCache.EntryKe
 	}
 	
 	@Override
-	public EntryValue get(EntryKey key) {
-		EntryValue entryValue = new EntryValue();
+	public DiskCache.ValueEntry get(DiskCache.KeyEntry key) {
+		DiskCache.ValueEntry entryValue = new DiskCache.ValueEntry();
 		if(key != null) {
 			Bitmap bm = decodeBitmapFromDisk(key.getKey(), key.getOptions());
 			entryValue.setValue(bm);
@@ -113,7 +108,7 @@ public class BitmapDiskLruCache extends BaseDiskCache<BitmapDiskLruCache.EntryKe
 	}
 	
 	@Override
-	public boolean copyIo(InputStream is, EntryKey key) {
+	public boolean copyIo(InputStream is, DiskCache.KeyEntry key) {
 		if(key != null) {
 			return writeBitmapToDisk(is, key.getKey());
 		} else {
@@ -177,43 +172,6 @@ public class BitmapDiskLruCache extends BaseDiskCache<BitmapDiskLruCache.EntryKe
 	private String generateDiskLruCacheKey(String s) {
 		return EncryptHelper.md5(s);
 	}
-	
-	public static class EntryKey {
-		
-		private String key;
-		private BitmapFactory.Options options;
-		
-		public String getKey() {
-			return key;
-		}
-
-		public void setKey(String key) {
-			this.key = key;
-		}
-
-		public BitmapFactory.Options getOptions() {
-			return options;
-		}
-		
-		public void setOptions(BitmapFactory.Options options) {
-			this.options = options;
-		}
-	}
-	
-	
-	public static class EntryValue {
-		
-		private Bitmap value;
-		
-		public Bitmap getValue() {
-			return value;
-		}
-		
-		public void setValue(Bitmap value) {
-			this.value = value;
-		}
-	}
-
 
 	@Override
 	public boolean clear() {

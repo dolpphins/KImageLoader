@@ -1,11 +1,13 @@
 package com.mao.imageloader.core;
 
 import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
 
 import com.mao.imageloader.cache.disk.BitmapDiskLruCache;
+import com.mao.imageloader.cache.disk.DiskCache;
 import com.mao.imageloader.cache.memory.LruMemoryCache;
+import com.mao.imageloader.cache.memory.MemoryCache;
+import com.mao.imageloader.network.Downloader;
+import com.mao.imageloader.network.impl.HttpDownloader;
 import com.mao.imageloader.utils.IoUtils;
 
 import android.graphics.Bitmap;
@@ -16,8 +18,9 @@ class ImageLoadActualizer {
 
 	private final static String TAG = "ImageLoadActualizer";
 	
-	private final static LruMemoryCache sBitmapCache = LruMemoryCache.newMemoryCache(); 
-	private BitmapDiskLruCache mLruDiskCache;
+	private MemoryCache<String, Bitmap> mMemoryCache;  
+	private DiskCache<DiskCache.KeyEntry, DiskCache.ValueEntry> mDiskCache;
+	private Downloader mDownloader;
 	
 	private ImageLoaderConfiguration mConfig;
 	
@@ -26,7 +29,28 @@ class ImageLoadActualizer {
 		if(mConfig == null) {
 			throw new IllegalArgumentException("ImageLoaderConfiguration can't be null");
 		}
-		mLruDiskCache = new BitmapDiskLruCache(mConfig.getDiskCachePath(), mConfig.isAutoCreateCacheDir(), mConfig.getDiskCacheMaxSize());
+		init();
+	}
+	
+	private void init() {
+		if(mConfig.getMemoryCacheManager() != null) {
+			mMemoryCache = mConfig.getMemoryCacheManager();
+		} else {
+			//默认内存缓存
+			mMemoryCache = LruMemoryCache.newMemoryCache();
+		}
+		if(mConfig.getDiskCacheManager() != null) {
+			mDiskCache = mConfig.getDiskCacheManager();
+		} else {
+			//默认磁盘缓存
+			mDiskCache = new BitmapDiskLruCache(mConfig.getDiskCachePath(), mConfig.isAutoCreateCacheDir(), mConfig.getDiskCacheMaxSize());
+		}
+		if(mConfig.getDownloader() != null) {
+			mDownloader = mConfig.getDownloader();
+		} else {
+			//默认下载器
+			mDownloader = new HttpDownloader();
+		}
 	}
 	
 	public ImageLoaderExecutor.Result load(ImageLoadTask task) {
@@ -64,39 +88,23 @@ class ImageLoadActualizer {
 	}
 	
 	private Bitmap tryLoadFromMemoryCache(String url, ImageLoaderOptions opts) {
-		Bitmap bm = sBitmapCache.get(url);
-		
-//		if(bm != null) {
-//			ByteArrayOutputStream baos = null;
-//			try {
-//				baos = new ByteArrayOutputStream();
-//				bm.compress(CompressFormat.JPEG, 100, baos);
-//				BitmapFactory.Options options = opts.getOptions();
-//				return BitmapFactory.decodeByteArray(baos.toByteArray(), 0, baos.size(), options);
-//			} catch(Exception e) {
-//				e.printStackTrace();
-//			} finally {
-//				IoUtils.closeStream(baos);
-//			}
-//		}
-//		return null;
-		return bm;
+		return mMemoryCache.get(url);
 	}
 	
 	private Bitmap tryLoadFromDiskCache(String url, ImageLoaderOptions opts) {
 		
-		BitmapDiskLruCache.EntryValue entryValue = getDiskCache(url, opts);
-		if(entryValue != null) {
-			return entryValue.getValue();
+		DiskCache.ValueEntry valueEntry = getDiskCache(url, opts);
+		if(valueEntry != null) {
+			return valueEntry.getValue();
 		}
 		return null;
 	}
 	
-	private BitmapDiskLruCache.EntryValue getDiskCache(String url, ImageLoaderOptions opts) {
-		BitmapDiskLruCache.EntryKey entryKey = new BitmapDiskLruCache.EntryKey();
-		entryKey.setKey(url);
-		entryKey.setOptions(opts.getOptions());
-		return mLruDiskCache.get(entryKey);
+	private DiskCache.ValueEntry getDiskCache(String url, ImageLoaderOptions opts) {
+		DiskCache.KeyEntry keyEntry = new DiskCache.KeyEntry();
+		keyEntry.setKey(url);
+		keyEntry.setOptions(opts.getOptions());
+		return mDiskCache.get(keyEntry);
 	}
 	
 	private Bitmap tryLoadFromFileSystem(String url, ImageLoaderOptions opts) {
@@ -105,22 +113,22 @@ class ImageLoadActualizer {
 	}
 	
 	private Bitmap tryLoadFromNetwork(String url, ImageLoaderOptions opts) {
+		if(mDownloader == null) {
+			return null;
+		}
 		InputStream is = null;
 		try {
-			URL networkUrl = new URL(url);
-			URLConnection con = networkUrl.openConnection();
-			con.setConnectTimeout(60 * 1000);
-			is = con.getInputStream();
+			is = mDownloader.getInputStream(url);
 			if(is != null) {
 				Bitmap bm = null;
 				if((opts.isCacheInDisk())) {
-					BitmapDiskLruCache.EntryKey entryKey = new BitmapDiskLruCache.EntryKey();
+					DiskCache.KeyEntry entryKey = new DiskCache.KeyEntry();
 					entryKey.setKey(url);
 					entryKey.setOptions(opts.getOptions());
-					if(mLruDiskCache.copyIo(is, entryKey)) {
-						BitmapDiskLruCache.EntryValue entryValue = mLruDiskCache.get(entryKey);
-						if(entryValue != null) {
-							bm = entryValue.getValue();
+					if(mDiskCache.copyIo(is, entryKey)) {
+						DiskCache.ValueEntry valueEntry = mDiskCache.get(entryKey);
+						if(valueEntry != null) {
+							bm = valueEntry.getValue();
 						}
 					}
 				} else if(!opts.isCacheInDisk()) {
@@ -160,7 +168,31 @@ class ImageLoadActualizer {
 	
 	private void trySaveToMemoryCache(String url, Bitmap bitmap) {
 		if(!TextUtils.isEmpty(url) && bitmap != null) {
-			sBitmapCache.put(url, bitmap);
+			mMemoryCache.put(url, bitmap);
 		}
+	}
+
+	public MemoryCache<String, Bitmap> getMemoryCache() {
+		return mMemoryCache;
+	}
+
+	public void setMemoryCache(MemoryCache<String, Bitmap> memoryCache) {
+		this.mMemoryCache = memoryCache;
+	}
+
+	public DiskCache<DiskCache.KeyEntry, DiskCache.ValueEntry> getLruDiskCache() {
+		return mDiskCache;
+	}
+
+	public void setLruDiskCache(DiskCache<DiskCache.KeyEntry, DiskCache.ValueEntry> diskCache) {
+		this.mDiskCache = diskCache;
+	}
+
+	public Downloader getDownloader() {
+		return mDownloader;
+	}
+
+	public void setDownloader(Downloader downloader) {
+		this.mDownloader = downloader;
 	}
 }
