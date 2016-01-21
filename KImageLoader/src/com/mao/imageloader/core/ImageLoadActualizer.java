@@ -37,7 +37,7 @@ class ImageLoadActualizer {
 			mMemoryCache = mConfig.getMemoryCacheManager();
 		} else {
 			//默认内存缓存
-			mMemoryCache = LruMemoryCache.newMemoryCache();
+			mMemoryCache = LruMemoryCache.getInstance();
 		}
 		if(mConfig.getDiskCacheManager() != null) {
 			mDiskCache = mConfig.getDiskCacheManager();

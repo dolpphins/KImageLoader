@@ -11,42 +11,28 @@ import android.text.TextUtils;
  * @author mao
  *
  */
-public class LruMemoryCache extends BaseMemoryCache<String, Bitmap>{
-
+public class LruMemoryCache extends BaseMemoryCache<String, Bitmap> {
+	
 	/** 缓存条件内存因子 */
 	private final static float LIMIT_FACTOR = 15.0f;
 	
 	/** 最大缓存大小，单位：字节，默认为堆最大大小的1/6*/
 	private final static int MAX_CACHE_SIZE = (int) (Runtime.getRuntime().maxMemory() / 6);
 	
-	private android.support.v4.util.LruCache<String, Bitmap> sBitmapCache;
+	private static android.support.v4.util.LruCache<String, Bitmap> sBitmapCache = new android.support.v4.util.LruCache<String, Bitmap>(MAX_CACHE_SIZE){
+		
+		@Override
+		protected int sizeOf(String key, Bitmap value) {
+			return BitmapUtils.sizeOfBitmap(value);
+		}
+	};
+	
+	private static LruMemoryCache sIntsance = new LruMemoryCache();
 	
 	private LruMemoryCache() {}
 	
-	private void init(int maxSize) {
-		if(sBitmapCache == null) {
-			sBitmapCache = new android.support.v4.util.LruCache<String, Bitmap>(maxSize){
-				
-				@Override
-				protected int sizeOf(String key, Bitmap value) {
-					return BitmapUtils.sizeOfBitmap(value);
-				}
-			};
-		}
-	}
-	
-	public static LruMemoryCache newMemoryCache() {
-		return newMemoryCache(0);
-	}
-	
-	public static LruMemoryCache newMemoryCache(int maxSize) {
-		LruMemoryCache cache = new LruMemoryCache();
-		if(maxSize <= 0) {
-			maxSize = MAX_CACHE_SIZE;
-		} 
-		cache.init(maxSize);
-		
-		return cache;
+	public static LruMemoryCache getInstance() {
+		return sIntsance;
 	}
 	
 	@Override
