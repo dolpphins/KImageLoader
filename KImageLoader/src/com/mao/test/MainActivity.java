@@ -50,11 +50,10 @@ public class MainActivity extends Activity {
 				.setBitmapOptions(null) //指定要加载的图片的质量等
 				.build();
 		
-		String url = "http://img2.imgtn.bdimg.com/it/u=2702123953,998736265&fm=21&gp=0.jpg";
+		String url = "http://e.hiphotos.baidu.com/zhidao/pic/item/4a36acaf2edda3cc7060e14c01e93901203f92d1.jpg";
 		
 		ImageView imageView = (ImageView) findViewById(R.id.iv);
 		imageLoader.displayImage(getApplicationContext(), url, imageView, opts);
-		
 	}
 	
 	private void initData() {

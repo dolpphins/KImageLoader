@@ -1,10 +1,13 @@
 package com.mao.imageloader.network.impl;
 
+import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
 
 import com.mao.imageloader.network.Downloader;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * Http下载器
@@ -14,19 +17,28 @@ import com.mao.imageloader.network.Downloader;
  */
 public class HttpDownloader implements Downloader{
 
+	private OkHttpClient okHttpClient;
+	
+	public HttpDownloader() {
+		okHttpClient = new OkHttpClient();
+	}
+	
 	@Override
 	public InputStream getInputStream(String url) {
 		try {
-			URL networkUrl = new URL(url);
-			URLConnection con = networkUrl.openConnection();
-			con.setConnectTimeout(60 * 1000);
-			return con.getInputStream();
+			Request request = new Request.Builder()
+								.url(url)
+								.build();
+			Response response = okHttpClient.newCall(request).execute();
+			if(response != null) {
+				return response.body().byteStream();
+			}
+		} catch (IOException e) {
+			
 		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		} finally {
 			
 		}
+		return null;
 	}
 
 }
