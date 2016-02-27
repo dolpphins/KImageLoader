@@ -10,7 +10,7 @@ public class MethodsCompat {
 	@SuppressWarnings("deprecation")
 	@SuppressLint("NewApi")
 	public static Drawable getDrawable(Context context, int resId) {
-		if(context == null) {
+		if(context == null || resId == 0) {
 			return null;
 		}
 		try {
@@ -20,7 +20,7 @@ public class MethodsCompat {
 				return context.getResources().getDrawable(resId);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			return null;
 		}
 		

@@ -69,7 +69,7 @@ class ImageLoaderExecutor {
 		
 		//先判断是否存在相同任务
 		if(mTaskMap.containsValue(task)) { //containsValue底部使用equals比较是否相等
-			L.i(TAG, "存在相同的任务啦...");
+			//L.i(TAG, "存在相同的任务啦...");
 			return;
 		}
 		
