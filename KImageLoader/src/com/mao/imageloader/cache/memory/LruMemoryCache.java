@@ -4,6 +4,7 @@ import com.mao.imageloader.utils.BitmapUtils;
 
 import android.graphics.Bitmap;
 import android.text.TextUtils;
+import android.util.Log;
 
 /**
  * 基于LruCache的Bitmap内存缓存管理器

@@ -1,6 +1,8 @@
 # KImageLoader
 the ImageLoader which provides some particular actions
 
+![Screenshot](https://github.com/dolpphins/KImageLoader/raw/master/images/ui.png)
+
 Features
 ------
 

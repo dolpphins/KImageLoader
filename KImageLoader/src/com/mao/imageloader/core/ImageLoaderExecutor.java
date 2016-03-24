@@ -73,7 +73,6 @@ class ImageLoaderExecutor {
 			return;
 		}
 		
-		//
 		ImageLoaderOptions opts = task.getOptions();
 		if(opts == null) {
 			opts = DEFAULT_OPTIONS; 
@@ -82,7 +81,7 @@ class ImageLoaderExecutor {
 		String taskID = RandomUtils.randomDigits();
 		Callable<Result> callableTask = new ImageLoadCallable(taskID, task);
 		FutureTask<Result> future = new ImageLoadFuture(taskID, callableTask, task);
-		//当前线程为UI线程
+		//当前线程为UI线程，无须同步
 		mTaskMap.put(taskID, task);
 		mFutureMap.put(taskID, future);
 		
