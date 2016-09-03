@@ -1,41 +1,42 @@
 # KImageLoader
-the ImageLoader which provides some particular actions
+具有某些新特性的图片加载框架
 
 ![Screenshot](https://github.com/dolpphins/KImageLoader/raw/master/images/ui.png)
 
-Features
+特点
 ------
 
-* Load a picture for one more ImageView at the same time.
-* Specify the loaded picture's source.
-* Specify the quality of loaded picture.
-* Set the prioprity of loading picture's thread.
-* Listening loading process
+* 同时为多个ImageView加载同一张图片
+* 指定图片加载来源
+* 指定图片加载质量
+* 指定是否需要缓存到内存中或者磁盘中
+* 设置图片加载任务优先级
+* 监听图片加载过程
 
-Usage
+用法
 ------
 
 ```
 
 	imageLoader = ImageLoader.getInstance();
 		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder()
-						.setDiskCacheMaxSize(2 * 1024 * 1024 * 1024L) //max disk cache 2G
-						.setDiskCachePath("/sdcard/KImageLoader") //disk cache directory
-						.isAutoCreateCacheDir(true) //create disk cache directory automatically if not exists
-						.setMemoryCacheManager(null) //specify the memory cache manager
-						.setDiskCacheManager(null)   //specify the disk cache manager
-						.setDownloader(null)         //specify the downloader
+						.setDiskCacheMaxSize(2 * 1024 * 1024 * 1024L) //指定最大磁盘缓存为2GB
+						.setDiskCachePath("/sdcard/KImageLoader") //指定磁盘缓存目录
+						.isAutoCreateCacheDir(true) //如果磁盘缓存目录不存在自动创建
+						.setMemoryCacheManager(null) //指定内存缓存管理器
+						.setDiskCacheManager(null)   //指定磁盘缓存管理器
+						.setDownloader(null)         //指定网络下载器
 						.build();
 		imageLoader.setImageLoaderConfiguration(config);
 		ImageLoaderOptions opts = new ImageLoaderOptions.Builder()
-				.cacheInMemory(true) //permit cache in memory
-				.cacheInDisk(true)   //permit cache in disk
-				.setLoadingDrawableId(R.drawable.ic_launcher) //the picture which shows while loading
-				.setLoadedfailDrawableId(R.drawable.image_emoticon10) //the picture which shows while loaded fail
-				.loadFromMemory(true) //permit read cache from memory
-				.loadFromDisk(true)   //permit read cache from disk
-				.loadFromNetwork(true) //permit get data from network
-				.setBitmapOptions(null) //specify the quality of loading picture
+				.cacheInMemory(true) //允许缓存到内存缓存中
+				.cacheInDisk(true)   //允许缓存到磁盘缓存中
+				.setLoadingDrawableId(R.drawable.ic_launcher) //加载图片过程中显示的图片
+				.setLoadedfailDrawableId(R.drawable.image_emoticon10) //加载失败时显示的图片
+				.loadFromMemory(true) //允许从内存缓存中加载
+				.loadFromDisk(true)   //允许从磁盘缓存中加载
+				.loadFromNetwork(true) //允许从网络上加载
+				.setBitmapOptions(null) //指定加载的图片质量
 				.build();
 		String url = "http://img2.imgtn.bdimg.com/it/u=2702123953,998736265&fm=21&gp=0.jpg";
 		ImageView imageView = (ImageView) findViewById(R.id.iv);
