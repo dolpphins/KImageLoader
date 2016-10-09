@@ -1,5 +1,6 @@
 package com.mao.imageloader.cache.memory;
 
+import com.mao.imageloader.cache.core.OptLruCache;
 import com.mao.imageloader.utils.BitmapUtils;
 
 import android.graphics.Bitmap;
@@ -19,8 +20,8 @@ public class LruMemoryCache extends BaseMemoryCache<String, Bitmap> {
 	
 	/** 最大缓存大小，单位：字节，默认为堆最大大小的1/6*/
 	private final static int MAX_CACHE_SIZE = (int) (Runtime.getRuntime().maxMemory() / 6);
-	
-	private static android.support.v4.util.LruCache<String, Bitmap> sBitmapCache = new android.support.v4.util.LruCache<String, Bitmap>(MAX_CACHE_SIZE){
+
+	private static OptLruCache<String, Bitmap> sBitmapCache = new OptLruCache<String, Bitmap>(MAX_CACHE_SIZE){
 		
 		@Override
 		protected int sizeOf(String key, Bitmap value) {
@@ -78,5 +79,15 @@ public class LruMemoryCache extends BaseMemoryCache<String, Bitmap> {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * 设置最大移除节点数，如果执行LRU算法时需要移除的节点数大于
+	 * 该值则不进行移除
+	 *
+	 * @param maxRemoveCount 最大移除节点数，必须大于等于0
+	 */
+	public static void setMaxRemoveCount(int maxRemoveCount) {
+		sBitmapCache.setMaxRemoveCount(maxRemoveCount);
 	}
 }
