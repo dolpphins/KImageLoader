@@ -19,6 +19,8 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
 
+import javax.crypto.spec.DESedeKeySpec;
+
 class ImageLoaderExecutor {
 
 	private final static String TAG = "ImageLoaderExecutor";
@@ -46,7 +48,12 @@ class ImageLoaderExecutor {
 
 	
 	private final static ImageLoaderConfiguration DEFAULT_CONFIGURATION = new ImageLoaderConfiguration.Builder().build();
-	private final static ImageLoaderOptions DEFAULT_OPTIONS = new ImageLoaderOptions.Builder().build();
+	private final static ImageLoaderOptions DEFAULT_OPTIONS =
+			new ImageLoaderOptions.Builder()
+					.loadFromMemory(true)
+					.loadFromDisk(true)
+					.loadFromNetwork(true)
+					.build();
 	
 	
 	private OnImageLoaderExecutorListener mExecutorListener;
@@ -75,7 +82,7 @@ class ImageLoaderExecutor {
 		
 		ImageLoaderOptions opts = task.getOptions();
 		if(opts == null) {
-			opts = DEFAULT_OPTIONS; 
+			task.setOptions(DEFAULT_OPTIONS);
 		}
 		
 		String taskID = RandomUtils.randomDigits();
